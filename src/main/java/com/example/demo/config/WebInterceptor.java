@@ -23,17 +23,11 @@ public class WebInterceptor implements HandlerInterceptor {
         if (null == redisTemplate.opsForValue().get("msg") || !token.equals(redisTemplate.opsForValue().get("msg"))){
             System.out.println("token验证失败");
             //由于跨域访问的时候，不能随意获取服务器响应头，所以在服务器编码的时候要加上下面的这行内容，然后再存入数据
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Allow-Headers", "Accept, Origin, X-Requested-With, Content-Type,Last-Modified,device,token");
             response.setHeader("Access-Control-Expose-Headers","status");
             response.setHeader("status","fail");
             return false;
         }
         System.out.println("token验证成功");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Accept, Origin, X-Requested-With, Content-Type,Last-Modified,device,token");
         redisTemplate.expire("msg",60, TimeUnit.SECONDS);
         return true;
     }
