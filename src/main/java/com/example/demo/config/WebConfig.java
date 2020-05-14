@@ -30,13 +30,18 @@ public class WebConfig extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/**/login");
     }
 
+
     //全局设置来自前端的跨域请求可以访问哪些接口
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**");
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowCredentials(true)
+                        .allowedMethods("*")
+                        .maxAge(3600);
             }
         };
     }
