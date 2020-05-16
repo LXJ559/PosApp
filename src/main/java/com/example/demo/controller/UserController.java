@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.*;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -41,7 +42,7 @@ public class UserController {
             jsonObject.put("message","该用户已被注册，请直接登录!");
         }else {
             String password = (String)param.get("password");
-            user.setId(0);
+            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setUsername(username);
             user.setPassword(password);
             userService.insert(user);
@@ -56,10 +57,13 @@ public class UserController {
         String password = (String)param.get("password");
         JSONObject jsonObject = new JSONObject();
         User oldUser = userService.findByName(username);
-        if (!StringUtils.isEmpty(oldUser) && password.equals(oldUser.getPassword())){
+        if(StringUtils.isEmpty(oldUser)){
+            jsonObject.put("status","please register");
+        }
+        else if (!StringUtils.isEmpty(oldUser) && password.equals(oldUser.getPassword())){
             //登陆成功
             jsonObject.put("status","success");
-            String token = new TokenUtil().tokenStorage(username);
+            String token = TokenUtil.tokenStorage(username);
             redisTemplate.opsForValue().set("msg",token);
             redisTemplate.expire("msg",60, TimeUnit.SECONDS);
 

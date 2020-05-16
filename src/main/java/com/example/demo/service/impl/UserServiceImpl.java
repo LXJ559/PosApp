@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 新增数据
-     *
      * @param user 实例对象
      * @return 实例对象
      */
