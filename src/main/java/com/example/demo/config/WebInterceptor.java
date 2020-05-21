@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import com.example.demo.util.TokenUtil;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,6 +22,9 @@ public class WebInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private  UserService userService;
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse response, Object handler) throws IOException {
         String requestUri = httpServletRequest.getRequestURI();
@@ -28,6 +32,11 @@ public class WebInterceptor implements HandlerInterceptor {
             return true;
         }
         String token = httpServletRequest.getHeader("Authorization");
+        if (null != token && !"".equals(token)){
+            String username =  TokenUtil.tokenDepart(token);
+            User user = userService.findByName(username);
+            httpServletRequest.getSession().setAttribute("currentUser",user);
+        }
         System.out.println(token);
         if (null == redisTemplate.opsForValue().get("msg") || !token.equals(redisTemplate.opsForValue().get("msg"))){
 //            System.out.println("token验证失败");

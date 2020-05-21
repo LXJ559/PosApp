@@ -29,4 +29,9 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsRepository.findAll();
     }
 
+    @Override
+    public Goods findGoodsById(String goodsId) {
+        return goodsRepository.findGoodsById(goodsId);
+    }
+
 }

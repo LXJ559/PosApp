@@ -11,4 +11,6 @@ public interface GoodsService {
     Goods findGoodsByName(String goodsName);
 
     List<Goods> findAllGoods();
+
+    Goods findGoodsById(String goodsId);
 }

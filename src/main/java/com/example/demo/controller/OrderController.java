@@ -1,19 +1,19 @@
 package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.config.CurrentUser;
 import com.example.demo.entity.Goods;
 import com.example.demo.entity.SysOrder;
 import com.example.demo.entity.User;
 import com.example.demo.service.GoodsService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.UserService;
-import com.example.demo.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,10 +42,9 @@ public class OrderController {
     private JSONObject jsonObject = new JSONObject();
 
     @PostMapping("/checkout")
-    public JSONObject check(HttpServletRequest request, @RequestBody List<Map> paramList){
-        String token = request.getHeader("Authorization");
-        String username =  TokenUtil.tokenDepart(token);
-//        System.out.println(username);
+    public JSONObject check(@CurrentUser User user, @RequestBody List<Map> paramList){
+        String username = user.getUsername();
+        System.out.println(username);
         for(Map param : paramList){
             //根据名字查找用户信息
             User orderUser = userService.findByName(username);
@@ -73,4 +72,24 @@ public class OrderController {
         return jsonObject;
     }
 
+    //获取当前用户的全部订单
+    @GetMapping("/getOrder")
+    public JSONObject getOrder(@CurrentUser User user){
+        List<SysOrder> orderList = orderService.findCurrentUserOrder(user.getId());
+        if(!StringUtils.isEmpty(orderList)){
+            List<Goods> goodsList = new ArrayList<>();
+            for(SysOrder order : orderList){
+                Goods goods = goodsService.findGoodsById(order.getGoodsId());
+//                System.out.println(goods.toString());;
+                goodsList.add(goods);
+            }
+//            System.out.println(orderList.toString());
+            jsonObject.put("goodsList",goodsList);
+            jsonObject.put("orderList",orderList);
+            jsonObject.put("status","success");
+        }else {
+            jsonObject.put("status","fail");
+        }
+        return  jsonObject;
+    }
 }
