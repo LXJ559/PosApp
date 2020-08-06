@@ -4,6 +4,7 @@ import com.example.demo.entity.Goods;
 import com.example.demo.repository.GoodsRepository;
 import com.example.demo.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,9 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @Cacheable(cacheNames = "goods")
     public List<Goods> findAllGoods() {
+        System.out.println("执行了");
         return goodsRepository.findAll();
     }
 
