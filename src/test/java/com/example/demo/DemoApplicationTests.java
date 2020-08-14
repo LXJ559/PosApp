@@ -2,6 +2,8 @@ package com.example.demo;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +20,9 @@ class DemoApplicationTests {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    AmqpAdmin amqpAdmin;
 
     @Test
     public void test(){
@@ -38,6 +43,11 @@ class DemoApplicationTests {
     public void receive(){
         Object o = rabbitTemplate.receiveAndConvert("atguigu");
         System.out.println(o);
+    }
+
+    @Test
+    public void createQueue(){
+        amqpAdmin.declareQueue(new Queue("TestQueue"));
     }
 
 }

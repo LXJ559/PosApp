@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.entity.User;
+import com.example.demo.service.MessageService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.annotation.Resource;
 import javax.servlet.http.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +29,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
-    @Autowired
+    @Resource
+    private MessageService messageService;
+
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
 

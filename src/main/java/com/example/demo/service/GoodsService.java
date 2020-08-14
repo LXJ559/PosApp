@@ -13,4 +13,10 @@ public interface GoodsService {
     List<Goods> findAllGoods();
 
     Goods findGoodsById(String goodsId);
+
+    Goods findGoodsByGoodsId(Integer goodsId);
+
+    void updateGoods(Goods goods);
+
+    void deleteGoods(Integer goodsId);
 }

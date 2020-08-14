@@ -7,10 +7,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.List;
 
@@ -41,7 +39,14 @@ public class WebConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(getWebInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/login","/**/admin");
+                .excludePathPatterns("/**/login","/**/admin","/**/*.js","/**/*.css","/**/*.html");
+    }
+
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // classpath表示在resource目录下，/static/** 表示在URL路径中访问如
+        // http://localhost:8080/static/ 即可访问到resource下的static目录
+        registry.addResourceHandler("/**/*.js","/**/*.css").addResourceLocations("classpath:/static/");
+//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
 
@@ -77,5 +82,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
         // 这个顺序很重要哦，为避免麻烦请设置在最前
         bean.setOrder(0);
         return bean;
+    }
+
+    //向容器注册自定义视图解析器
+    @Bean
+    public LocaleResolver localeResolver(){
+        return new I18nConfig();
     }
 }

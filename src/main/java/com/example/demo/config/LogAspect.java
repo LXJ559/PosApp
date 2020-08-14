@@ -32,10 +32,10 @@ public class LogAspect {
         } catch (Throwable throwable) {
             log.error("异常通知");
             throw new RuntimeException(throwable);
-
-        }finally {
-            log.info("最终通知");
         }
+//        }finally {
+//            log.info("最终通知");
+//        }
     }
 
 //    @Before("pt1()")

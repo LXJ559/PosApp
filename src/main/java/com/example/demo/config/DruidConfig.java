@@ -20,6 +20,8 @@ public class DruidConfig {
 //    public DataSource druidDataSource() {
 //        return new DruidDataSource();
 //    }
+
+    //访问：localhost:8888/pos/druid
     @Bean
     public ServletRegistrationBean<StatViewServlet> statViewServlet() {
         ServletRegistrationBean<StatViewServlet> bean = new ServletRegistrationBean<>(new StatViewServlet(),
