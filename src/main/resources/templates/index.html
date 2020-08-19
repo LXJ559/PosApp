@@ -9,7 +9,6 @@
     <script th:src="@{/asserts/js/bootstrap/3.3.6/bootstrap.min.js}"></script>
 </head>
 <body>
-    
     <!--th:text 将div里面的文本内容设置为 -->
     <div  class="container" >
         <div class="row" style="margin-top: 40px">
@@ -21,10 +20,10 @@
                     <tbody>
                     <tr>
                         <td>
-                            <a  style="text-decoration: none;" th:href="@{/admin(l='zh_CN')}">
+                            <a  style="text-decoration: none;" th:href="@{/admin(start=${start},l='zh_CN')}">
                                中文
                             </a>
-                            <a  style="text-decoration: none" th:href="@{/admin(l='en_US')}">
+                            <a  style="text-decoration: none" th:href="@{/admin(start=${start},l='en_US')}">
                                 英文
                             </a>
                         </td>
@@ -56,7 +55,7 @@
                     <th th:text="#{index.options}">操作</th>
                     </thead>
                     <tbody>
-                    <tr th:each="goods:${goodsList}">
+                    <tr th:each="goods:${goodsPage.getList()}">
                         <td th:text="${goods.goodsId}">id</td>
                         <td th:text="${goods.goodsName}">name</td>
                         <td th:text="${goods.goodsCount}">count</td>
@@ -68,6 +67,41 @@
                     </tr>
                     </tbody>
                 </table>
+
+                <div class="Page" style="text-align: center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li th:class="${goodsPage.number==0 ? 'nav-link active':'nav-link'} ">
+                                <a th:href="@{/admin(start=0)}">首页</a></li>
+                            <li th:class="${start <= 0 ? 'disabled':'nav-link' }">
+                                <a th:href="${goodsPage.number} <= 0 ? @{/admin(start=0)} : @{/admin(start=${goodsPage.number - 1})}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li th:class="${goodsPage.number==start ? 'nav-link active':'nav-link'}">
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number})}" th:text="${goodsPage.number+1}">1</a>
+                            </li>
+                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link'}">
+                                <!--这里和下面的标签本来时a，但是为了禁用不再提交请求，改成了span-->
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 1})}" th:text="${goodsPage.number+2}">2</a>
+                            </li>
+                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 2})}" th:text="${goodsPage.number+3}">3</a>
+                            </li>
+                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 3})}" th:text="${goodsPage.number+4}">4</a>
+                            </li>
+                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 4})}" th:text="${goodsPage.number+5}">5</a>
+                            </li>
+                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                                <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 1})}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li th:class="${start == goodsPage.totalPages - 1 ? 'nav-link active':'nav-link'} "><a th:href="@{/admin(start=${goodsPage.totalPages - 1})}">尾页</a></li>
+                        </ul>
+                    </nav>
             </div>
         </div>
 
@@ -118,7 +152,7 @@
         </div>
 
         <!--公告窗口-->
-        <div class="modal" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -162,6 +196,7 @@
         </div>
     </div>
 </body>
+
 <style>
     .container{
         height: 100%;
@@ -173,6 +208,7 @@
         text-align: center;
     }
     a:active {color: red; }                             /*激活：红色*/
+
 
 </style>
 <script type="text/javascript">

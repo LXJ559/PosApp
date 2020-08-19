@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -23,6 +24,9 @@ class DemoApplicationTests {
 
     @Autowired
     AmqpAdmin amqpAdmin;
+
+    @Autowired
+    RedisTemplate<String,Object> redisTemplate;
 
     @Test
     public void test(){
@@ -49,5 +53,7 @@ class DemoApplicationTests {
     public void createQueue(){
         amqpAdmin.declareQueue(new Queue("TestQueue"));
     }
+
+
 
 }

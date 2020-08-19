@@ -1,12 +1,14 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Message;
+import com.example.demo.entity.MessageVO;
 import com.example.demo.repository.MessageRepository;
 import com.example.demo.service.MessageService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service("MessageService")
 public class MessageServiceImpl implements MessageService {
@@ -15,8 +17,15 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
 
     @Override
-    public Message addMessage(Message message) {
-        return messageRepository.save(message);
+    @CacheEvict(cacheNames = "messages",key = "1")
+    public void addMessage(MessageVO message) {
+        messageRepository.save(message);
+    }
+
+    @Override
+    @Cacheable(cacheNames = "messages",key = "1")
+    public List<MessageVO> getMessages() {
+        return messageRepository.findAll();
     }
 
 }

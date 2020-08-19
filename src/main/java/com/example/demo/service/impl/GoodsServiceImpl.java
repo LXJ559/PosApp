@@ -3,9 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Goods;
 import com.example.demo.repository.GoodsRepository;
 import com.example.demo.service.GoodsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +31,6 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     @Cacheable(cacheNames = "goods",key = "1")
     public List<Goods> findAllGoods() {
-        System.out.println("执行了");
         return goodsRepository.findAll();
     }
 

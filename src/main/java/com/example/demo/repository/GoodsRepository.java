@@ -23,4 +23,6 @@ public interface GoodsRepository extends JpaRepository<Goods,Integer> {
     @Transactional
     @Query("delete from Goods goods where goods.goodsId = :goodsId")
     void deleteGoodsByGoodsId(Integer goodsId);
+
+
 }

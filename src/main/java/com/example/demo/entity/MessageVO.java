@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name = "message")
-public class Message implements Serializable {
-    private static final long serialVersionUID = -9104379991296548088L;
+public class MessageVO implements Serializable {
+    private static final long serialVersionUID = -910437999129648088L;
 
     @Id
     @Column(name = "id")

@@ -1,9 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Message;
+import com.example.demo.entity.MessageVO;
+
+import java.util.List;
 
 public interface MessageService {
 
-    Message addMessage(Message message);
+    void addMessage(MessageVO message);
 
+    List<MessageVO> getMessages();
 }
