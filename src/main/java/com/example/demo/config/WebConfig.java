@@ -39,13 +39,13 @@ public class WebConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(getWebInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/login","/**/admin","/**/*.js","/**/*.css","/**/*.html");
+                .excludePathPatterns("/**/login","/**/admin","/**/*.js","/**/*.css","/**/*.ico","/**/*.html");
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // classpath表示在resource目录下，/static/** 表示在URL路径中访问如
         // http://localhost:8080/static/ 即可访问到resource下的static目录
-        registry.addResourceHandler("/**/*.js","/**/*.css").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/**/*.js","/**/*.css","/**/*.ico").addResourceLocations("classpath:/static/");
 //        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
