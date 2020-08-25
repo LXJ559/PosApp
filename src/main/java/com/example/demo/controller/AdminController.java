@@ -8,7 +8,6 @@ import com.example.demo.entity.Page;
 import com.example.demo.service.GoodsService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -51,9 +50,9 @@ public class AdminController {
 
 
 
-    //增加商
+    //增加商品
     @PostMapping("/addGoods")
-    public String addGoods(Goods goods,Model model){
+    public String addGoods( Goods goods, Model model){
         //如果已经存在，则只增加数量
         Goods oldGoods = goodsService.findGoodsByName(goods.getGoodsName());
         if (!StringUtils.isEmpty(oldGoods)){

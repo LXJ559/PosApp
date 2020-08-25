@@ -6,6 +6,7 @@ import com.example.demo.service.UserService;
 import com.example.demo.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +34,6 @@ public class UserController {
     private UserService userService;
 
     @Resource
-    private MessageService messageService;
-
-    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
 
@@ -51,7 +49,7 @@ public class UserController {
             String password = (String)param.get("password");
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setUsername(username);
-            user.setPassword(password);
+            user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
             userService.insert(user);
             jsonObject.put("message","注册成功");
         }
@@ -67,7 +65,7 @@ public class UserController {
         if(StringUtils.isEmpty(oldUser)){
             jsonObject.put("status","please register");
         }
-        else if (!StringUtils.isEmpty(oldUser) && password.equals(oldUser.getPassword())){
+        else if (!StringUtils.isEmpty(oldUser) && DigestUtils.md5DigestAsHex(password.getBytes()).equals(oldUser.getPassword())){
             //登陆成功
             jsonObject.put("status","success");
             String token = TokenUtil.tokenStorage(username);

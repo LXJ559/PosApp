@@ -24,11 +24,13 @@ public class Goods implements Serializable {
     @Column(name = "id")
     private String id;
 
+
     @Column(name = "goods_id")
     private int goodsId;
 
     @Column(name = "goods_name")
     private String goodsName;
+
 
     @Column(name = "price")
     private int price;
