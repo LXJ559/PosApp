@@ -25,9 +25,9 @@ public class WebInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse response, Object handler) throws IOException {
         String requestUri = httpServletRequest.getRequestURI();
-        if(requestUri.endsWith("/register")){
-            return true;
-        }
+//        if(requestUri.endsWith("/register") || requestUri.endsWith("/getVCode")||requestUri.endsWith("/checkVCode")){
+//            return true;
+//        }
         String token = httpServletRequest.getHeader("Authorization");
         if (null != token && !"".equals(token)){
             String username =  TokenUtil.tokenDepart(token);

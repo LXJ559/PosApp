@@ -39,7 +39,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(getWebInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/login","/**/admin","/**/*.js","/**/*.css","/**/*.ico","/**/*.html");
+                .excludePathPatterns("/**/user/*","/**/admin","/**/*.js","/**/*.css","/**/*.ico","/**/*.html");
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

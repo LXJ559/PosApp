@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.entity.User;
+import com.example.demo.job.SendMailJob;
 import com.example.demo.service.MessageService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -36,6 +36,8 @@ public class UserController {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Resource
+    private SendMailJob sendMailJob;
 
     @PostMapping("/register")
     public JSONObject register(@RequestBody Map param){
@@ -47,9 +49,11 @@ public class UserController {
             jsonObject.put("message","该用户已被注册，请直接登录!");
         }else {
             String password = (String)param.get("password");
+            String email = (String)param.get("email");
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setUsername(username);
             user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+            user.setEmail(email);
             userService.insert(user);
             jsonObject.put("message","注册成功");
         }
@@ -71,7 +75,6 @@ public class UserController {
             String token = TokenUtil.tokenStorage(username);
             redisTemplate.opsForValue().set("msg",token);
             redisTemplate.expire("msg",60, TimeUnit.SECONDS);
-
             jsonObject.put("token",token);
         }else{
             //登陆失败
@@ -80,5 +83,42 @@ public class UserController {
 
         return  jsonObject;
     }
+
+    @PostMapping("/getVCode")
+    public JSONObject getVCode(@RequestBody Map param){
+        String username = (String) param.get("username");
+        User oldUser = userService.findByName(username);
+        JSONObject jsonObject = new JSONObject();
+        if (StringUtils.isEmpty(oldUser)) {
+            jsonObject.put("message", "该用户还没有注册");
+        }
+        String email = (String) param.get("email");
+        if (!email.equals(oldUser.getEmail())){
+            jsonObject.put("error","该邮箱与注册邮箱不一致");
+        }else {
+            int vCode = (int) (Math.random()*900000+100000);
+            redisTemplate.opsForValue().set("VCode",String.valueOf(vCode));
+            redisTemplate.expire("VCode",60*5,TimeUnit.SECONDS);
+            sendMailJob.sendVCode(vCode,email);
+            jsonObject.put("success","success");
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("/checkVCode")
+    public JSONObject checkVCode(@RequestBody Map param){
+        String verificationCode = (String) param.get("VerificationCode");
+        JSONObject jsonObject = new JSONObject();
+        if ("".equals(redisTemplate.opsForValue().get("VCode"))||null==redisTemplate.opsForValue().get("VCode")){
+            jsonObject.put("message","验证码已失效");
+        }else if (!verificationCode.equals(redisTemplate.opsForValue().get("VCode"))){
+            jsonObject.put("message","验证码错误，请重新输入");
+        }else {
+            jsonObject.put("success","success");
+        }
+        return jsonObject;
+    }
+
+
 
 }
