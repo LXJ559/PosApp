@@ -97,6 +97,7 @@ public class UserController {
             jsonObject.put("error","该邮箱与注册邮箱不一致");
         }else {
             int vCode = (int) (Math.random()*900000+100000);
+            redisTemplate.opsForValue().set("username",username);
             redisTemplate.opsForValue().set("VCode",String.valueOf(vCode));
             redisTemplate.expire("VCode",60*5,TimeUnit.SECONDS);
             sendMailJob.sendVCode(vCode,email);
@@ -108,17 +109,36 @@ public class UserController {
     @PostMapping("/checkVCode")
     public JSONObject checkVCode(@RequestBody Map param){
         String verificationCode = (String) param.get("VerificationCode");
+        String username = (String) param.get("username");
         JSONObject jsonObject = new JSONObject();
         if ("".equals(redisTemplate.opsForValue().get("VCode"))||null==redisTemplate.opsForValue().get("VCode")){
+            redisTemplate.expire("username",0,TimeUnit.SECONDS);
             jsonObject.put("message","验证码已失效");
         }else if (!verificationCode.equals(redisTemplate.opsForValue().get("VCode"))){
             jsonObject.put("message","验证码错误，请重新输入");
-        }else {
+        }else if(!username.equals(redisTemplate.opsForValue().get("username"))){
+            jsonObject.put("message","用户名错误，请重新输入");
+        } else {
+            redisTemplate.expire("VCode",0,TimeUnit.SECONDS);
             jsonObject.put("success","success");
         }
         return jsonObject;
     }
 
-
+    @PostMapping("/reset")
+    public JSONObject reset(@RequestBody Map param){
+        String password = (String) param.get("password");
+        User oldUser = userService.findByName((String) redisTemplate.opsForValue().get("username"));
+        JSONObject jsonObject = new JSONObject();
+        if (!StringUtils.isEmpty(oldUser)){
+            oldUser.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+            userService.insert(oldUser);
+            redisTemplate.expire("username",0,TimeUnit.SECONDS);
+            jsonObject.put("success","success");
+        }else {
+            jsonObject.put("fail","fail");
+        }
+        return jsonObject;
+    }
 
 }
