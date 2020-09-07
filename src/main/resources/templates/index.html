@@ -22,10 +22,10 @@
                     <tbody>
                     <tr>
                         <td>
-                            <a  style="text-decoration: none;" th:href="@{/admin(start=${start},l='zh_CN')}">
+                            <a style="text-decoration: none;" th:href="@{/admin(start=${start},l='zh_CN')}">
                                中文
                             </a>
-                            <a  style="text-decoration: none" th:href="@{/admin(start=${start},l='en_US')}">
+                            <a style="text-decoration: none" th:href="@{/admin(start=${start},l='en_US')}">
                                 英文
                             </a>
                         </td>
@@ -74,7 +74,8 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <li th:class="${goodsPage.number==0 ? 'nav-link active':'nav-link'} ">
-                                <a th:href="@{/admin(start=0)}">首页</a></li>
+                                <a th:href="@{/admin(start=0)}">首页</a>
+                            </li>
                             <li th:class="${start <= 0 ? 'disabled':'nav-link' }">
                                 <a th:href="${goodsPage.number} <= 0 ? @{/admin(start=0)} : @{/admin(start=${goodsPage.number - 1})}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
@@ -83,17 +84,17 @@
                             <li th:class="${goodsPage.number==start ? 'nav-link active':'nav-link'}">
                                 <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number})}" th:text="${goodsPage.number+1}">1</a>
                             </li>
-                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link'}">
+                            <li th:style="'display:' + @{(${start> goodsPage.totalPages -2}? 'none':'inline')}">
                                 <!--这里和下面的标签本来时a，但是为了禁用不再提交请求，改成了span-->
                                 <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 1})}" th:text="${goodsPage.number+2}">2</a>
                             </li>
-                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                            <li th:style="'display:' + @{(${start> goodsPage.totalPages -3}? 'none':'inline')}">
                                 <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 2})}" th:text="${goodsPage.number+3}">3</a>
                             </li>
-                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                            <li th:style="'display:' + @{(${start> goodsPage.totalPages -4}? 'none':'inline')}">
                                 <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 3})}" th:text="${goodsPage.number+4}">4</a>
                             </li>
-                            <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
+                            <li  th:style="'display:' + @{(${start> goodsPage.totalPages -5}? 'none':'inline')}">
                                 <a th:href="${goodsPage.number} >= ${goodsPage.totalPages - 1} ? @{/admin(start=${goodsPage.totalPages - 1})} : @{/admin(start=${goodsPage.number + 4})}" th:text="${goodsPage.number+5}">5</a>
                             </li>
                             <li th:class="${start >= goodsPage.totalPages -1 ? 'disabled':'nav-link' }">
@@ -104,6 +105,7 @@
                             <li th:class="${start == goodsPage.totalPages - 1 ? 'nav-link active':'nav-link'} "><a th:href="@{/admin(start=${goodsPage.totalPages - 1})}">尾页</a></li>
                         </ul>
                     </nav>
+                </div>
             </div>
         </div>
 
@@ -214,8 +216,5 @@
 
 </style>
 <script type="text/javascript">
-    $(function () {
-        $("#addForm").boot
-    })
 </script>
 </html>

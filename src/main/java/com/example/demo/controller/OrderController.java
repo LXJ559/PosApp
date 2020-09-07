@@ -42,32 +42,36 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public JSONObject check(@CurrentUser User user, @RequestBody List<Map> paramList){
-        String username = user.getUsername();
-        System.out.println(username);
-        for(Map param : paramList){
-            //根据名字查找用户信息
-            User orderUser = userService.findByName(username);
-            //根据商品名查找商品信息
-            Goods orderGoods = goodsService.findGoodsByName((String) param.get("goodsName"));
-            //根据用户名和商品名查找订单，若重复，加数量
-            SysOrder oldOrder = orderService.findOrder(orderUser.getId(),orderGoods.getId());
-            if (!StringUtils.isEmpty(oldOrder)){
-                oldOrder.setCount(oldOrder.getCount()+(Integer) param.get("count"));
-                SysOrder result = orderService.addOrder(oldOrder);
-                if(!StringUtils.isEmpty(result)){
-                    jsonObject.put("status","success");
-                }
-            }else {
-                order.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                order.setUserId(orderUser.getId());
-                order.setGoodsId(orderGoods.getId());
-                order.setCount((Integer) param.get("count"));
-                SysOrder orderResult = orderService.addOrder(order);
-                if(!StringUtils.isEmpty(orderResult)){
-                    jsonObject.put("status","success");
+        if (!"".equals(user.getUsername()) || null != user.getUsername()){
+            String username = user.getUsername();
+            for(Map param : paramList){
+                //根据名字查找用户信息
+                User orderUser = userService.findByName(username);
+                //根据商品名查找商品信息
+                Goods orderGoods = goodsService.findGoodsByName((String) param.get("goodsName"));
+                //根据用户名和商品名查找订单，若重复，加数量
+                SysOrder oldOrder = orderService.findOrder(orderUser.getId(),orderGoods.getId());
+                if (!StringUtils.isEmpty(oldOrder)){
+                    oldOrder.setCount(oldOrder.getCount()+(Integer) param.get("count"));
+                    SysOrder result = orderService.addOrder(oldOrder);
+                    if(!StringUtils.isEmpty(result)){
+                        jsonObject.put("status","success");
+                    }
+                }else {
+                    order.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    order.setUserId(orderUser.getId());
+                    order.setGoodsId(orderGoods.getId());
+                    order.setCount((Integer) param.get("count"));
+                    SysOrder orderResult = orderService.addOrder(order);
+                    if(!StringUtils.isEmpty(orderResult)){
+                        jsonObject.put("status","success");
+                    }
                 }
             }
+        }else {
+            jsonObject.put("status","fail");
         }
+
         return jsonObject;
     }
 

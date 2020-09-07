@@ -29,7 +29,7 @@ public class AdminController {
 
     //注意地址跳转不要加responsebody，否则会返回json字符串
     @RequestMapping("")
-    public String index(Model model,@RequestParam(value = "start", defaultValue = "0") int start,
+    public String index(Model model, @RequestParam(value = "start", defaultValue = "0") int start,
                         @RequestParam(value = "size", defaultValue = "5") int size){
         List<Goods> goodsList = goodsService.findAllGoods();
         goodsList.sort(new Comparator<Goods>() {

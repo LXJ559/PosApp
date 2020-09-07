@@ -29,14 +29,18 @@ public class WebInterceptor implements HandlerInterceptor {
 //            return true;
 //        }
         String token = httpServletRequest.getHeader("Authorization");
-        if (null != token && !"".equals(token)){
+        if (null == token || "".equals(token)){
+            response.setHeader("Access-Control-Expose-Headers","status");
+            response.setHeader("status","fail");
+            return false;
+        }else{
             String username =  TokenUtil.tokenDepart(token);
             User user = userService.findByName(username);
             httpServletRequest.getSession().setAttribute("currentUser",user);
         }
         System.out.println(token);
-        if (null == redisTemplate.opsForValue().get("msg") && token != (redisTemplate.opsForValue().get("msg"))){
-//            System.out.println("token验证失败");
+        if (null == redisTemplate.opsForValue().get("msg") ||"".equals(redisTemplate.opsForValue().get("msg"))|| !token.equals(redisTemplate.opsForValue().get("msg"))){
+            //System.out.println("token验证失败");
             //由于跨域访问的时候，不能随意获取服务器响应头，所以在服务器编码的时候要加上下面的这行内容，然后再存入数据
             response.setHeader("Access-Control-Expose-Headers","status");
             response.setHeader("status","fail");

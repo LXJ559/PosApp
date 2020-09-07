@@ -3,11 +3,13 @@ package com.example.demo.config;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 public class I18nConfig implements LocaleResolver {
+
     @Override
     public Locale resolveLocale(HttpServletRequest httpServletRequest) {
         String l =  httpServletRequest.getParameter("l");
