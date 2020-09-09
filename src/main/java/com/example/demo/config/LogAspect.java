@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -7,12 +8,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
+
 @Component("logger")
 @Aspect //表示当前类是一个切面类
 @EnableAspectJAutoProxy
 public class LogAspect {
 
     private Logger log = LoggerFactory.getLogger(LogAspect.class);
+
 
     @Pointcut("execution(* com.example.demo.service.*.*(..))")
     public void pt1(){
@@ -38,10 +42,17 @@ public class LogAspect {
 //        }
     }
 
-//    @Before("pt1()")
-//    public void beforePointcut(){
-//
-//    }
+    @Before("pt1()")
+    public void beforePointcut(JoinPoint joinPoint){
+        String name = joinPoint.getSignature().getName();
+        if (name.startsWith("get") || name.startsWith("query") || name.startsWith("find")) {
+            log.info("current datasource is slaver1====>");
+            DataSourceRoutingDataSource.MASTER_STATUS.set(false);
+        } else {
+            log.info("current datasource is master====>");
+            DataSourceRoutingDataSource.MASTER_STATUS.set(true);
+        }
+    }
 //    @AfterReturning("pt1()")
 //    public void AfterReturningPointcut(){
 //
