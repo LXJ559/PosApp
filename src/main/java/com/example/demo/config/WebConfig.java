@@ -35,18 +35,20 @@ public class WebConfig extends WebMvcConfigurationSupport {
     }
 
     //将自定义拦截器注册，然后才能使用，除了login接口其他均可访问
+    //  /user/* 匹配的是 /user/aa，/user/bb 等，又如  /user/*/ab 匹配到 /user/p/ab
+    // /user/** 匹配到 /user/aa、/user/p/bb 等
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(getWebInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/user/*","/**/admin","/**/goods/findAllGoods","/**/*.js","/**/*.css","/**/*.ico","/**/*.html");
+                .excludePathPatterns("/**/user/*","/**/admin","/**/admin/**","/**/goods/findAllGoods","/**/*.js","/**/*.css","/**/*.ico","/**/*.html");
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // classpath表示在resource目录下，/static/** 表示在URL路径中访问如
         // http://localhost:8080/static/ 即可访问到resource下的static目录
         registry.addResourceHandler("/**/*.js","/**/*.css","/**/*.ico").addResourceLocations("classpath:/static/");
-//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        // registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
 
